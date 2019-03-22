@@ -9,7 +9,7 @@ namespace Battleship.Ships
     public class Battleship : ShipBase
     {
         public Battleship()
-            : base(ShipType.Battleship, 3)
+            : base(ShipType.Battleship, 4)
         {
         }
     }

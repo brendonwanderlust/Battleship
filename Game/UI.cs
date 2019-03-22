@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Battleship.Players;
+using Battleship.Ships;
+using Battleship.Game;
 
 namespace Battleship
 {
-    public class UI
+    public static class UI
     {
         public static void InvalidCoordinateMessage()
         {
@@ -190,7 +193,7 @@ namespace Battleship
                     Console.WriteLine("");
                     continue;
                 }
-                if (!Int32.TryParse(selction, out int selectionInt))
+                if (!int.TryParse(selction, out int selectionInt))
                 {
                     Console.WriteLine("Please enter a number.");
                     Console.WriteLine("");
@@ -228,9 +231,198 @@ namespace Battleship
             var coordinates = "";
             for (var i = 0; i < ship.Coordinates.Count; i++)
             {
-                coordinates += UI.FormatCoordinateForUI(ship.Coordinates[i]) + " ";
+                coordinates += FormatCoordinateForUI(ship.Coordinates[i]) + " ";
             }
             return coordinates;
+        }
+        public static void ChooseShipLocations(PlayerBase player)
+        {
+            while (player.FloatingShipList.Count() < 5)
+            {
+
+                ShipBase ship = null;
+
+                ship = ChooseShipAndValidate(player, ship);// Asks which ship the user would like to place and determines whether their input is valid.
+                ship = ChooseShipStartPositionAndValidate(player, ship);// Asks what starting position to place the ship and determines whether their input is valid.
+                ship = ChooseShipDirectionAndValidate(player, ship);// Asks which direction they'd like to orient their ship and determines whether their input is valid. 
+
+                Console.Clear();
+                player.FloatingShipList.Add(ship);
+
+            }
+        }
+
+        private static ShipBase ChooseShipDirectionAndValidate(PlayerBase player, ShipBase ship)
+        {
+            while (true)
+            {
+                string[] acceptableDirectionOptions = new string[] { "up", "down", "left", "right" };
+
+                Console.WriteLine("Which direction would you like to place your ship? (up, down, left, right)");
+
+                var shipDirectionString = Console.ReadLine().ToLower();
+
+                if (string.IsNullOrEmpty(shipDirectionString))
+                {
+                    Console.WriteLine("Please enter a valid response. Valid responses include: up, down, left, right");
+                    Console.WriteLine("");
+                    continue;
+                }
+
+                if (!Array.Exists(acceptableDirectionOptions, element => element == shipDirectionString))
+                {
+                    Console.WriteLine("Please enter a valid response. Valid responses include: up, down, left, right");
+                    Console.WriteLine("");
+                    continue;
+                }
+
+                ship.ShipDirection = Enum.GetValues(typeof(Direction)).Cast<Direction>().First(e => e.ToString() == shipDirectionString);
+                ship.SetHorizontalEnd(ship.HorizontalStart, ship.ShipDirection);
+                ship.SetVerticalEnd(ship.VerticalStart, ship.ShipDirection);
+
+                if (!Gameplay.IsSelectionOnGameboard(ship))
+                {
+                    ship.Coordinates.RemoveRange(1, (ship.Coordinates.Count() - 1));
+                    Console.WriteLine("You've placed your ship partially off the board. Please try again.");
+                    Console.WriteLine("");
+                    continue;
+                }
+
+                ship.SetRemainingShipCoordinates(ship.ShipDirection);
+
+                if (Gameplay.DoShipCoordinatesOverlap(ship, player))
+                {
+                    ship.Coordinates.RemoveRange(1, (ship.Coordinates.Count() - 1));
+                    Console.WriteLine("You've placed your ship on top of another ship. Please try again.");
+                    Console.WriteLine($"");
+                    continue;
+                }
+                break;
+            }
+            return ship;
+        }
+
+        private static ShipBase ChooseShipStartPositionAndValidate(PlayerBase player, ShipBase ship)
+        {
+            while (true)
+            {
+                string[] acceptableHorizontalOptions = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
+                string[] acceptableVerticalOptions = new string[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
+
+                Console.WriteLine($"Where would you like to place your {ship.Type}? (Choose from: Horizontal A - J and Vertical 1 - 10. For Example: A10.)");
+                string locationString = Console.ReadLine();
+
+                if (string.IsNullOrEmpty(locationString))
+                {
+                    Console.WriteLine("You must select a valid coordinate! Please try again.");
+                    Console.WriteLine("");
+                    continue;
+                }
+
+                var horizontalStartString = locationString.Substring(0, 1).ToUpper();
+                var verticalStartString = locationString.Substring(1);
+
+                if (string.IsNullOrEmpty(horizontalStartString) || string.IsNullOrEmpty(verticalStartString))
+                {
+                    Console.WriteLine("You must select a valid coordinate! Please try again.");
+                    Console.WriteLine("");
+                    continue;
+                }
+
+                if (!Int32.TryParse(verticalStartString, out int verticalStartInt))
+                {
+                    Console.WriteLine("You must select a valid vertical position! Please try again.");
+                    Console.WriteLine("");
+                    continue;
+                }
+
+                if (!Array.Exists(acceptableHorizontalOptions, element => element == horizontalStartString) ||
+                        !Array.Exists(acceptableVerticalOptions, element => element == verticalStartString) ||
+                        verticalStartInt >= 11 ||
+                        verticalStartInt <= 0)
+                {
+                    Console.WriteLine("Please enter a valid coordinate.");
+                    Console.WriteLine($"     Acceptable horizontal positions include: A, B, C, D, E, F, G, H, I, J");
+                    Console.WriteLine($"     Acceptable vertical positions include: 1, 2 , 3, 4, 5, 6, 7, 8, 9, 10");
+                    Console.WriteLine("");
+                    continue;
+                }
+
+                ship.HorizontalStart = Enum.GetValues(typeof(Horizontal)).Cast<Horizontal>().First(e => e.ToString() == horizontalStartString);
+                ship.VerticalStart = (Vertical)verticalStartInt;
+                ship.SetInitialShipCoordinate(ship.HorizontalStart, ship.VerticalStart);
+
+                if (Gameplay.DoShipCoordinatesOverlap(ship, player))
+                {
+                    ship.Coordinates.Clear();
+                    Console.WriteLine("You've placed your ship on top of another ship. Please try again.");
+                    Console.WriteLine("");
+                    continue;
+                }
+                break;
+            }
+            return ship;
+        }
+
+        private static ShipBase ChooseShipAndValidate(PlayerBase player, ShipBase ship)
+        {
+            int shipTypeInt = 0;
+            while (true)
+            {
+                Console.WriteLine("Which ship would you like to place? Carrier = 1, Cruiser = 2, Destroyer = 3, Battleship = 4, Submarine = 5");
+                var shipChoice = Console.ReadLine();
+
+                if (string.IsNullOrEmpty(shipChoice))
+                {
+                    Console.WriteLine("You must select a ship! Please try again.");
+                    Console.WriteLine("");
+                    continue;
+                }
+                if (!int.TryParse(shipChoice, out shipTypeInt))
+                {
+                    Console.WriteLine("That's not a valid choice. Please enter a value between 1 - 5!");
+                    Console.WriteLine("");
+                    continue;
+                }
+
+                if (Gameplay.DoShipTypesOverlap(player, shipTypeInt))
+                {
+                    Console.WriteLine($"You've already placed a {(ShipType)shipTypeInt}. Please try again.");
+                    Console.WriteLine("");
+                    continue;
+                }
+
+                if (shipTypeInt < 0 || shipTypeInt > 5)
+                {
+                    Console.WriteLine("That's not a valid choice. Please enter a value between 1 - 5!");
+                    Console.WriteLine("");
+                    continue;
+                }
+
+                var shipType = (ShipType)shipTypeInt;
+                switch (shipType)
+                {
+                    case ShipType.Carrier:
+                        ship = new Carrier();
+                        break;
+                    case ShipType.Cruiser:
+                        ship = new Cruiser();
+                        break;
+                    case ShipType.Destroyer:
+                        ship = new Destroyer();
+                        break;
+                    case ShipType.Battleship:
+                        ship = new Ships.Battleship();
+                        break;
+                    case ShipType.Submarine:
+                        ship = new Submarine();
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            }
+            return ship;
         }
     }
 
