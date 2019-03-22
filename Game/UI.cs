@@ -49,7 +49,7 @@ namespace Battleship
             Console.WriteLine("Your ships and their locations are:");
             foreach (ShipBase ship in shipList)
             {
-                Console.WriteLine($"   {ship.Type}: Located at coordinates: {ship.ReturnShipCoordinates()}");
+                Console.WriteLine($"   {ship.Type}: Located at coordinates: {ReturnShipCoordinates(ship)}");
             }
             Console.WriteLine("");
         }
@@ -124,16 +124,11 @@ namespace Battleship
         {
             if (opponent.SunkShipList.Count == 0)
             {
-                //Console.WriteLine($"You haven't sunk any of {opponent.Name}'s ships yet.");
                 return;
             }
             else
             {
-                Console.WriteLine($"You've sunk ({opponent.SunkShipList.Count}) of your opponents ships:");
-                //foreach (ShipBase ship in opponent.SunkShipList)
-                //{
-                //    Console.WriteLine($"     {ship.Type}");
-                //}
+                Console.WriteLine($"You've sunk ({opponent.SunkShipList.Count}) of your opponents ships:");            
                 Console.WriteLine();
             }
             
@@ -219,7 +214,7 @@ namespace Battleship
             for (int a = 10; a >= 0; a--)
             {
                 
-                Console.WriteLine($"{a}");    // Add space to make sure to override previous contents
+                Console.WriteLine($"{a}");   
                 System.Threading.Thread.Sleep(1000);
             }
 
@@ -228,7 +223,15 @@ namespace Battleship
             Console.Clear();
         }
 
-
+        public static string ReturnShipCoordinates(ShipBase ship)
+        {
+            var coordinates = "";
+            for (var i = 0; i < ship.Coordinates.Count; i++)
+            {
+                coordinates += UI.FormatCoordinateForUI(ship.Coordinates[i]) + " ";
+            }
+            return coordinates;
+        }
     }
 
 }

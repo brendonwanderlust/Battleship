@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Battleship.Game;
 using Battleship.Ships;
+using Battleship.Players;
 
 namespace Battleship
 {
@@ -227,7 +228,7 @@ namespace Battleship
                     ship.SetHorizontalEnd(ship.HorizontalStart, ship.ShipDirection);
                     ship.SetVerticalEnd(ship.VerticalStart, ship.ShipDirection);
 
-                    if (!ship.IsSelectionOnGameboard())
+                    if (!IsSelectionOnGameboard(ship))
                     {
                         ship.Coordinates.RemoveRange(1, (ship.Coordinates.Count() - 1));
                         Console.WriteLine("You've placed your ship partially off the board. Please try again.");
@@ -389,7 +390,7 @@ namespace Battleship
                     ship.SetHorizontalEnd(ship.HorizontalStart, ship.ShipDirection);
                     ship.SetVerticalEnd(ship.VerticalStart, ship.ShipDirection);
 
-                    if (!ship.IsSelectionOnGameboard())
+                    if (!IsSelectionOnGameboard(ship))
                     {
                         ship.Coordinates.RemoveRange(1, (ship.Coordinates.Count() - 1));
                         continue;
@@ -441,6 +442,15 @@ namespace Battleship
                     Console.WriteLine();
                 }
             }
+        }
+
+        public bool IsSelectionOnGameboard(ShipBase ship)
+        {
+            if (!Enum.IsDefined(typeof(Horizontal), ship.HorizontalEnd) || !Enum.IsDefined(typeof(Vertical), ship.VerticalEnd))
+            {
+                return false;
+            }
+            return true;
         }
 
         public string CoordinateReformatter(string shotCoordinateString)

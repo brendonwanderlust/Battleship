@@ -26,15 +26,6 @@ namespace Battleship
         public List<string> Coordinates = new List<string>();
         public List<string> HitCoordinates = new List<string>();
 
-        public bool IsSelectionOnGameboard()
-        {           
-            if (!Enum.IsDefined(typeof(Horizontal), HorizontalEnd) || !Enum.IsDefined(typeof(Vertical), VerticalEnd))
-            {                       
-                return false;
-            }
-            return true;
-        }
-     
         public void SetHorizontalEnd(Horizontal horizontalStart, Ships.Direction shipDirection)
         {           
             if (shipDirection == Ships.Direction.up)
@@ -156,15 +147,7 @@ namespace Battleship
 
         }
 
-        public string ReturnShipCoordinates()
-        {
-            var coordinates = "";
-            for (var i = 0; i < Coordinates.Count; i++)
-            {
-                coordinates += UI.FormatCoordinateForUI(Coordinates[i]) +  " ";
-            }
-            return coordinates;
-        }
+        
     }
 
 }
