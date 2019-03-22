@@ -12,7 +12,7 @@ namespace Battleship
         {
             Console.WriteLine("***Welcome to Battleship!***");
 
-            Gameplay newGame = new Gameplay();
+            GameLogic newGame = new GameLogic();
             newGame.SinglePlayerGame();
 
 

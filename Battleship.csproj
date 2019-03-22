@@ -45,8 +45,8 @@
   <ItemGroup>
     <Compile Include="Game\GameType.cs" />
     <Compile Include="Players\ComputerPlayer.cs" />
-    <Compile Include="Game\UI.cs" />
-    <Compile Include="Game\Gameplay.cs" />
+    <Compile Include="Game\UILogic.cs" />
+    <Compile Include="Game\GameLogic.cs" />
     <Compile Include="Game\Horizontal.cs" />
     <Compile Include="Players\HumanPlayer.cs" />
     <Compile Include="Players\PlayerType.cs" />

@@ -9,7 +9,7 @@ using Battleship.Players;
 
 namespace Battleship
 {
-    public class Gameplay
+    public class GameLogic
     {
         public bool GameOn = true;
         public GameType Type { get; private set; }
@@ -387,6 +387,7 @@ namespace Battleship
                     UI.DisplayOpponentsSunkShipNames(opponent);
                     Console.WriteLine("**************************************************************************************************************");
                     UI.AskForShotCoordinate();
+                    Console.WriteLine("");
                     string shotCoordinateString = Console.ReadLine().ToUpper();
                     if (!IsCoordinateInAcceptableFormat(shotCoordinateString) || !IsCoordinateOnGameboard(shotCoordinateString))
                     {

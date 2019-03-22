@@ -103,13 +103,11 @@ namespace Battleship
         public static string FormatCoordinateForUI(string coordinate)
         {
             var formattedCoordinate = "";
-
             var horizontalString = coordinate.Substring(0, 1).ToUpper();
             var verticalString = coordinate.Substring(1).ToLower();
             Enum.TryParse(verticalString, out Vertical verticalEnum);
             var verticalStartInt = Convert.ToInt32(verticalEnum);
             formattedCoordinate = horizontalString + verticalStartInt.ToString();
-
             return formattedCoordinate;
         }
 
@@ -280,7 +278,7 @@ namespace Battleship
                 ship.SetHorizontalEnd(ship.HorizontalStart, ship.ShipDirection);
                 ship.SetVerticalEnd(ship.VerticalStart, ship.ShipDirection);
 
-                if (!Gameplay.IsSelectionOnGameboard(ship))
+                if (!GameLogic.IsSelectionOnGameboard(ship))
                 {
                     ship.Coordinates.RemoveRange(1, (ship.Coordinates.Count() - 1));
                     Console.WriteLine("You've placed your ship partially off the board. Please try again.");
@@ -290,7 +288,7 @@ namespace Battleship
 
                 ship.SetRemainingShipCoordinates(ship.ShipDirection);
 
-                if (Gameplay.DoShipCoordinatesOverlap(ship, player))
+                if (GameLogic.DoShipCoordinatesOverlap(ship, player))
                 {
                     ship.Coordinates.RemoveRange(1, (ship.Coordinates.Count() - 1));
                     Console.WriteLine("You've placed your ship on top of another ship. Please try again.");
@@ -352,7 +350,7 @@ namespace Battleship
                 ship.VerticalStart = (Vertical)verticalStartInt;
                 ship.SetInitialShipCoordinate(ship.HorizontalStart, ship.VerticalStart);
 
-                if (Gameplay.DoShipCoordinatesOverlap(ship, player))
+                if (GameLogic.DoShipCoordinatesOverlap(ship, player))
                 {
                     ship.Coordinates.Clear();
                     Console.WriteLine("You've placed your ship on top of another ship. Please try again.");
@@ -385,7 +383,7 @@ namespace Battleship
                     continue;
                 }
 
-                if (Gameplay.DoShipTypesOverlap(player, shipTypeInt))
+                if (GameLogic.DoShipTypesOverlap(player, shipTypeInt))
                 {
                     Console.WriteLine($"You've already placed a {(ShipType)shipTypeInt}. Please try again.");
                     Console.WriteLine("");
