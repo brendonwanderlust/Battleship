@@ -1,0 +1,7 @@
+C:\Users\brendon.carrasquillo\source\repos\Battleship\Battleship\bin\Release\Battleship.exe.config
+C:\Users\brendon.carrasquillo\source\repos\Battleship\Battleship\bin\Release\Battleship.exe
+C:\Users\brendon.carrasquillo\source\repos\Battleship\Battleship\bin\Release\Battleship.pdb
+C:\Users\brendon.carrasquillo\source\repos\Battleship\Battleship\obj\Release\Battleship.csprojAssemblyReference.cache
+C:\Users\brendon.carrasquillo\source\repos\Battleship\Battleship\obj\Release\Battleship.csproj.CoreCompileInputs.cache
+C:\Users\brendon.carrasquillo\source\repos\Battleship\Battleship\obj\Release\Battleship.exe
+C:\Users\brendon.carrasquillo\source\repos\Battleship\Battleship\obj\Release\Battleship.pdb
